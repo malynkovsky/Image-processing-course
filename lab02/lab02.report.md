@@ -1,3 +1,30 @@
+﻿## Работа 2. Визуализация искажений jpeg-сжатия
+автор: Малынковский О.В.
+дата: @time_stemp@
+
+<!-- url: https://gitlab.com/malynkovsky/image_proc/-/tree/master/lab02 -->
+
+### Задание
+Для исходного изображения (сохраненного без потерь) создать jpeg версии с двумя уровнями качества (например, 95 и 65). Вычислить и визуализировать на одной “мозаике” исходное изображение, результаты сжатия, поканальные и яркостные различия.
+
+### Результаты
+
+![](image.png)
+Рис 1. Исходное изображение
+
+
+![](result65.jpg)
+
+![](result95.jpg)
+
+![](resultboth.jpg)
+
+![](resultgray.jpg)
+Рис 2. Результаты работы программы 
+
+### Текст программы
+
+```cpp
 #include <vector>
 #include <stdio.h>
 #include <opencv2/opencv.hpp>
@@ -6,7 +33,7 @@ using namespace cv;
 using namespace std;
 
 Mat Split_into_channels(Mat img) {
-	Mat result_img = Mat::zeros(img.cols * 2, img.rows * 4, CV_8UC3); //��� ������� � ��������
+	Mat result_img = Mat::zeros(img.cols * 2, img.rows * 4, CV_8UC3); //для мозаики и картинок
 	Mat splitted_rgb[3];
 	split(img, splitted_rgb);
 	Rect roi_0_0 = Rect(0, 0, img.rows, img.cols);
@@ -19,27 +46,27 @@ Mat Split_into_channels(Mat img) {
 	img.copyTo(result_img(roi_0_0));
 
 	Mat bchannel; Mat gchannel; Mat rchannel;
-	Mat bchannel3[] = { splitted_rgb[0] ,splitted_rgb[0],splitted_rgb[0] }; //�������� ����� ����� �� , ��� � ����� ������ 
+	Mat bchannel3[] = { splitted_rgb[0] ,splitted_rgb[0],splitted_rgb[0] }; //значения везде такие же , как в синем канале 
 	merge(bchannel3, 3, bchannel);
 	bchannel.copyTo(result_img(roi_0_1));
-	Mat gchannel3[] = { splitted_rgb[1] ,splitted_rgb[1],splitted_rgb[1] };//�������� ����� ����� �� , ��� � ������� ������ 
+	Mat gchannel3[] = { splitted_rgb[1] ,splitted_rgb[1],splitted_rgb[1] };//значения везде такие же , как в зеленом канале 
 	merge(gchannel3, 3, gchannel);
 	gchannel.copyTo(result_img(roi_0_2));	
-	Mat rchannel3[] = { splitted_rgb[2], splitted_rgb[2], splitted_rgb[2] };//�������� ����� ����� �� , ��� � ������� ������ 
+	Mat rchannel3[] = { splitted_rgb[2], splitted_rgb[2], splitted_rgb[2] };//значения везде такие же , как в красном канале 
 	merge(rchannel3, 3, rchannel);
 	rchannel.copyTo(result_img(roi_0_3));
 
-	Mat blue_cl; //�������� ����� 0 ������ ������ ������ 
+	Mat blue_cl; //значения везде 0 кргоме синего канала 
 	Mat b3[] = { splitted_rgb[0], Mat::zeros(img.cols,img.rows, CV_8UC1),Mat::zeros(img.cols,img.rows, CV_8UC1) };
 	merge(b3, 3, blue_cl);
 	blue_cl.copyTo(result_img(roi_1_1));
 
-	Mat green_cl; //�������� ����� 0 ������ �������� ������ 
+	Mat green_cl; //значения везде 0 кргоме зеленого канала 
 	Mat g3[] = { Mat::zeros(img.cols,img.rows, CV_8UC1), splitted_rgb[1], Mat::zeros(img.cols,img.rows, CV_8UC1) };
 	merge(g3, 3, green_cl);
 	green_cl.copyTo(result_img(roi_1_2));
 
-	Mat red_cl; //�������� ����� 0 ������ �������� ������ 
+	Mat red_cl; //значения везде 0 кргоме красного канала 
 	Mat r3[] = { Mat::zeros(img.cols,img.rows, CV_8UC1),Mat::zeros(img.cols,img.rows, CV_8UC1),splitted_rgb[2] };
 	merge(r3, 3, red_cl);
 	red_cl.copyTo(result_img(roi_1_3));
@@ -65,3 +92,5 @@ int main() {
 	return 0;
 }
 
+
+```
